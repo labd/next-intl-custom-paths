@@ -1,0 +1,49 @@
+{
+	"name": "@labdigital/next-intl-custom-paths",
+	"version": "0.0.1",
+	"description": "Custom path support for next-intl",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"type": "module",
+	"keywords": [],
+	"author": "Lab Digital <opensource@labdigital.nl>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/labd/next-intl-custom-paths"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "tsup",
+		"publish:ci": "pnpm build && pnpm changeset publish",
+		"test": "vitest run",
+		"test:ci": "vitest run --coverage",
+		"tsc": "tsc --noEmit",
+		"format": "prettier --write src/ *.json *.js *.ts",
+		"lint": "eslint *.ts"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"@changesets/cli": "^2.26.2",
+		"@types/cookie-parser": "^1.4.3",
+		"@types/express": "^4.17.17",
+		"@typescript-eslint/eslint-plugin": "^5.60.1",
+		"@vitest/coverage-v8": "0.32.2",
+		"eslint": "^8.40.0",
+		"eslint-plugin-unused-imports": "^2.0.0",
+		"tsup": "^7.1.0",
+		"typescript": "^5.1.5",
+		"vitest": "0.32.2"
+	},
+	"peerDependencies": {
+		"next": ">= 14.0.4",
+		"next-intl": ">= 3.3.2"
+	}
+}
