@@ -6,7 +6,7 @@ Heavily inspired by https://github.com/amannn/next-intl/issues/653#issuecomment-
 ## Usage
 
 In your middleware.ts add the following
-```
+```ts
 import { createNextIntlCustomPathMiddleware } from "@labdigital/next-intl-custom-paths";
 
 const middleware = createNextIntlCustomPathMiddleware({
