@@ -10,7 +10,7 @@ dependencies:
     version: 14.0.4(react-dom@18.2.0)(react@18.2.0)
   next-intl:
     specifier: '>= 3.3.2'
-    version: 3.4.0(next@14.0.4)(react@18.2.0)
+    version: 3.3.2(next@14.0.4)(react@18.2.0)
 
 devDependencies:
   '@changesets/cli':
@@ -3043,8 +3043,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
-  /next-intl@3.4.0(next@14.0.4)(react@18.2.0):
-    resolution: {integrity: sha512-pccnuQq6N6iyPi0Foiajp9JgZp99w7gRxHhBxmtBdjsCmrsik7QflKWq2a/US2kFP734JSsSoY98xK+acjozeQ==}
+  /next-intl@3.3.2(next@14.0.4)(react@18.2.0):
+    resolution: {integrity: sha512-iIuIa6UULhClCpXGv/L05vJzAYEXbpMf1SrjSDwbtnFJP3mDjG6rBkffiEIqawfizGzUjnYf5r3GtptRL6MIBg==}
     peerDependencies:
       next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
