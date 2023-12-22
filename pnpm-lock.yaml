@@ -5,11 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  next:
-    specifier: '>= 14.0.4'
-    version: 14.0.4(react-dom@18.2.0)(react@18.2.0)
   next-intl:
-    specifier: '>= 3.3.2'
+    specifier: 3.3.2
     version: 3.3.2(next@14.0.4)(react@18.2.0)
 
 devDependencies:
