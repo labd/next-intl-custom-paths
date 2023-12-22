@@ -7,6 +7,7 @@ export default defineConfig([
 		splitting: false,
 		dts: true,
 		sourcemap: true,
+		external: ["next/server", "next-intl"],
 		format: ["esm", "cjs"],
 		outDir: "dist",
 	},
