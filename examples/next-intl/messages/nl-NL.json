@@ -1,0 +1,43 @@
+{
+	"IndexPage": {
+		"title": "next-intl voorbeeld",
+		"description": "Dit is een eenvoudig voorbeeld dat het gebruik van <code>next-intl</code> met de Next.js App Router demonstreert. Probeer de taal in de rechterbovenhoek te wijzigen en zie hoe de inhoud verandert."
+	},
+	"PathnamesPage": {
+		"title": "Padnamen",
+		"description": "<p>De padnamen zijn ook geïnternationaliseerd.</p><p>Als je de standaardtaal Engels gebruikt, zie je <code>/en/padnamen</code> in de adresbalk van de browser op deze pagina.</p><p>Als je de taal wijzigt naar Duits, wordt de URL dienovereenkomstig gelokaliseerd (<code>/de/pfadnamen</code>).</p>"
+	},
+	"Error": {
+		"title": "Er is iets fout gegaan!",
+		"description": "<p>Helaas hebben we een fout aangetroffen.</p><p>Je kunt proberen de pagina opnieuw te <retry>laden</retry> die je bezocht.</p>"
+	},
+	"NotFoundPage": {
+		"title": "Pagina niet gevonden",
+		"description": "Controleer de adresbalk van de browser dubbel of gebruik de navigatie om naar een bekende pagina te gaan."
+	},
+	"LocaleLayout": {
+		"title": "next-intl voorbeeld"
+	},
+	"LocaleSwitcher": {
+		"label": "Verander taal",
+		"locale": "{locale, select, de-DE {Duits} en-US {Engels} nl-NL {Nederlands} other {Onbekend}}"
+	},
+	"Navigation": {
+		"home": "Home",
+		"pathnames": "Padnamen"
+	},
+	"PageLayout": {
+		"links": {
+			"docs": {
+				"title": "Documenten",
+				"description": "Lees meer over next-intl in de officiële documentatie.",
+				"href": "https://next-intl-docs.vercel.app/"
+			},
+			"source": {
+				"title": "Broncode",
+				"description": "Bekijk de broncode van dit voorbeeld op GitHub.",
+				"href": "https://github.com/amannn/next-intl/tree/main/examples/example-app-router"
+			}
+		}
+	}
+}
