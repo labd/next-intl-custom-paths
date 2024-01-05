@@ -34,8 +34,6 @@ export function createNewIntlCustomPathMiddleware<Locales extends AllLocales>({
 			throw new Error("Duplicate locale path mapping");
 		}
 
-		console.log("Default locale is", defaultLocale);
-
 		const intlMiddleware = createNextIntlMiddleware({
 			locales,
 			defaultLocale,
@@ -64,10 +62,6 @@ function pathToLocale(
 	pathLocale: string,
 	mapping: Record<AllLocales[number], string>
 ): AllLocales[number] {
-	// const localePath = localeToPath(pathLocale, mapping);
-	// if (localePath) {
-	// 	return localePath;
-	// }
 	return mapping[pathLocale];
 }
 
@@ -88,8 +82,10 @@ function handlePathLocale(
 	pathToLocaleMapping: Record<string, AllLocales[number]>
 ) {
 	const pathLocale = request.nextUrl.pathname.split("/")[1];
+
+	// Check whether the locale used in the path is the complete unmapped locale
+	// If so we should redirect to the path mapped to that locale as to not trigger duplicate content
 	if (localeToPath(pathLocale, pathToLocaleMapping)) {
-		// The path is actually the complete locale, we should replace this
 		const mappedURL = new URL(
 			request.nextUrl.pathname.replace(
 				new RegExp(`^/${pathLocale}`),
