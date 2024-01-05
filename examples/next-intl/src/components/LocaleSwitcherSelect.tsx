@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "navigation";
 import { ChangeEvent, ReactNode, useTransition } from "react";
 
 type Props = {
@@ -22,8 +22,9 @@ export default function LocaleSwitcherSelect({
 
 	function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
 		const nextLocale = event.target.value;
+		console.log("NextLocale is", nextLocale);
 		startTransition(() => {
-			router.replace(`/${nextLocale}/${pathname}`);
+			router.replace(pathname, { locale: nextLocale });
 		});
 	}
 
