@@ -1,9 +1,19 @@
-type Options = {
-	locales: string[];
+type Options<
+	Locales extends AllLocales,
+	PathnamesConfig extends LocalizedPaths<Locales>
+> = {
+	locales: Locales;
 	defaultLocale: string;
 	languageTags: Record<string, string>;
-	localizedPaths: Record<string, Record<string, string>>;
+	localizedPaths: PathnamesConfig;
 };
+
+export type AllLocales = ReadonlyArray<string>;
+
+export type LocalizedPaths<Locales extends AllLocales> = Record<
+	string,
+	{ [key in Locales[number]]: string } | string
+>;
 
 type LocalePath = {
 	locale: string;
@@ -13,10 +23,13 @@ type LocalePath = {
 	exactMatch: boolean;
 };
 
-export class LocaleManager {
-	constructor(private options: Options) {}
+export class LocaleManager<
+	Locales extends AllLocales = AllLocales,
+	PathnamesConfig extends LocalizedPaths<Locales> = LocalizedPaths<Locales>
+> {
+	constructor(private options: Options<Locales, PathnamesConfig>) {}
 
-	locales(): string[] {
+	locales(): Locales {
 		return this.options.locales ?? [];
 	}
 
@@ -25,7 +38,7 @@ export class LocaleManager {
 	}
 
 	// Get the language tag from a locale
-	fromLanguageTag(locale: string): string | undefined {
+	fromLanguageTag(locale: Locales[number]): string | undefined {
 		if (this.options.languageTags[locale]) {
 			return this.options.languageTags[locale];
 		}
@@ -41,14 +54,19 @@ export class LocaleManager {
 	}
 
 	// Translate a native path to a localized path
-	toLocalizedPath(locale: string, path: string): string {
-		const localizedPaths = this.options.localizedPaths[locale];
+	toLocalizedPath(locale: Locales[number], path: string): string {
+		const localizedPaths = this.options.localizedPaths[path];
+
 		const prefix =
 			this.toLanguageTag(locale) ?? this.toLanguageTag(this.defaultLocale());
 		if (!localizedPaths) {
 			return `/${prefix}${path}`;
 		}
-		return `/${prefix}${localizedPaths[path] ?? path}`;
+		return `/${prefix}${
+			typeof localizedPaths === "string"
+				? localizedPaths
+				: localizedPaths[locale] ?? path
+		}`;
 	}
 
 	// Parse a localized path into a locale and internal path
@@ -59,9 +77,9 @@ export class LocaleManager {
 			return {
 				locale: locale,
 				path: "",
-				fullPath: `/${locale}/`,
+				fullPath: `/${this.toLanguageTag(locale)}`,
 				exactMatch: false,
-				localized: `/${this.toLanguageTag(locale)}/`,
+				localized: `/${this.toLanguageTag(locale)}`,
 			};
 		}
 
@@ -88,13 +106,18 @@ export class LocaleManager {
 		};
 	}
 
-	fromLocalizedPath(locale: string, path: string): string {
-		const localizedPaths = this.options.localizedPaths[locale];
+	fromLocalizedPath(locale: Locales[number], path: string): string {
+		const localizedPaths = this.options.localizedPaths[path];
 		if (!localizedPaths) {
 			return path;
 		}
+
+		if (typeof localizedPaths === "string") {
+			return localizedPaths;
+		}
+
 		const nativePath = Object.keys(localizedPaths).find(
-			(key) => localizedPaths[key] === path
+			(key: Locales[number]) => localizedPaths[key] === locale
 		);
 		return nativePath ?? path;
 	}
