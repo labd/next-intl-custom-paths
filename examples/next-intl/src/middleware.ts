@@ -41,8 +41,15 @@ export const middleware = (request: NextRequest) => {
 			de: "de-DE",
 		},
 		nextIntlMiddlewareOptions: {
-			localePrefix: "always",
+			localePrefix: "as-needed",
 			localeDetection: false,
+			pathnames: {
+				"/pathnames": {
+					"de-DE": "/pfadnamen",
+					"en-US": "/pathnames",
+					"nl-NL": "/padnamen",
+				},
+			},
 		},
 	});
 
