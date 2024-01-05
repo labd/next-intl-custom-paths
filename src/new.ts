@@ -6,11 +6,11 @@ import { NextRequest, NextResponse } from "next/server";
 // Helper type to get the arguments for a function
 export type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
 
-type NextIntlMiddlewareOptions = Partial<
+export type NextIntlMiddlewareOptions = Partial<
 	ArgsType<typeof createNextIntlMiddleware>[0]
 >;
 
-type AllLocales = ReadonlyArray<string>;
+export type AllLocales = ReadonlyArray<string>;
 
 type MiddlewareOptions<Locales extends AllLocales> = {
 	locales: Locales;
@@ -58,14 +58,14 @@ export function createNewIntlCustomPathMiddleware<Locales extends AllLocales>({
 	};
 }
 
-function pathToLocale(
+export function pathToLocale(
 	pathLocale: string,
 	mapping: Record<AllLocales[number], string>
 ): AllLocales[number] {
 	return mapping[pathLocale];
 }
 
-function localeToPath(
+export function localeToPath(
 	locale: AllLocales[number],
 	mapping: Record<AllLocales[number], string>
 ): string | undefined {

@@ -1,6 +1,7 @@
 import { Pathnames } from "next-intl/navigation";
 
 export const locales = ["en-US", "de-DE", "nl-NL"] as const;
+export const defaultLocale = "en-US";
 
 export const pathnames = {
 	"/": "/",
@@ -12,6 +13,12 @@ export const pathnames = {
 } satisfies Pathnames<typeof locales>;
 
 // Use the default: `always`
-export const localePrefix = undefined;
+export const localePrefix = "as-needed";
 
 export type AppPathnames = keyof typeof pathnames;
+
+export const pathToLocaleMapping = {
+	en: "en-US",
+	nl: "nl-NL",
+	de: "de-DE",
+} as const;

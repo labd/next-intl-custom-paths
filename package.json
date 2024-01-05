@@ -37,13 +37,17 @@
 		"src"
 	],
 	"peerDependencies": {
-		"next-intl": ">= 3.3.2",
-		"next": ">= 14.0.2"
+		"next": ">= 14.0.4",
+		"next-intl": ">= 3.4",
+		"react": ">= 18.2.0",
+		"react-dom": ">= 18.2.0"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.26.2",
 		"@types/cookie-parser": "^1.4.3",
 		"@types/express": "^4.17.17",
+		"@types/react": "^18.2.46",
+		"@types/react-dom": "^18.2.18",
 		"@typescript-eslint/eslint-plugin": "^5.60.1",
 		"@vitest/coverage-v8": "0.32.2",
 		"eslint": "^8.40.0",

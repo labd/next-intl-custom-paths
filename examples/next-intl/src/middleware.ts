@@ -1,6 +1,11 @@
 import { createNewIntlCustomPathMiddleware } from "@labdigital/next-intl-custom-paths";
 import { NextRequest } from "next/server";
-import { locales } from "./config";
+import {
+	localePrefix,
+	locales,
+	pathToLocaleMapping,
+	pathnames,
+} from "./config";
 
 // export const middleware = (request: NextRequest) => {
 // 	const manager = new LocaleManager({
@@ -35,21 +40,11 @@ export const middleware = (request: NextRequest) => {
 	const intlMiddleware = createNewIntlCustomPathMiddleware({
 		defaultLocale: "en-US",
 		locales: [...locales],
-		pathToLocaleMapping: {
-			en: "en-US",
-			nl: "nl-NL",
-			de: "de-DE",
-		},
+		pathToLocaleMapping,
 		nextIntlMiddlewareOptions: {
-			localePrefix: "as-needed",
+			localePrefix,
 			localeDetection: false,
-			pathnames: {
-				"/pathnames": {
-					"de-DE": "/pfadnamen",
-					"en-US": "/pathnames",
-					"nl-NL": "/padnamen",
-				},
-			},
+			pathnames,
 		},
 	});
 
