@@ -20,7 +20,7 @@
 	},
 	"LocaleSwitcher": {
 		"label": "Verander taal",
-		"locale": "{locale, select, de-DE {Duits} en-US {Engels} nl-NL {Nederlands} other {Onbekend}}"
+		"locale": "{locale, select, de_DE {Duits} en_US {Engels} nl_NL {Nederlands} other {Onbekend}}"
 	},
 	"Navigation": {
 		"home": "Home",

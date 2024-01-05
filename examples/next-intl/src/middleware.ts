@@ -1,28 +1,52 @@
-import {
-	LocaleManager,
-	createNextIntlCustomPathMiddleware,
-} from "@labdigital/next-intl-custom-paths";
+import { createNewIntlCustomPathMiddleware } from "@labdigital/next-intl-custom-paths";
 import { NextRequest } from "next/server";
 import { locales } from "./config";
 
+// export const middleware = (request: NextRequest) => {
+// 	const manager = new LocaleManager({
+// 		defaultLocale: "en-US",
+// 		locales: [...locales],
+// 		languageTags: {
+// 			en: "en-US",
+// 			nl: "nl-NL",
+// 			de: "de-DE",
+// 		},
+// 		localizedPaths: {
+// 			"/pathnames": {
+// 				"en-US": "/pathnames",
+// 				"nl-NL": "/padnamen",
+// 				"de-DE": "/pfadnamen",
+// 			},
+// 		},
+// 	});
+
+// 	const customMiddleware = createNextIntlCustomPathMiddleware({
+// 		localeManager: manager,
+// 		useLocaleForRoot: true,
+// 		nextIntlMiddlewareOptions: {
+// 			localePrefix: "always",
+// 		},
+// 	});
+
+// 	return customMiddleware(request);
+// };
+
 export const middleware = (request: NextRequest) => {
-	const manager = new LocaleManager({
+	const intlMiddleware = createNewIntlCustomPathMiddleware({
 		defaultLocale: "en-US",
 		locales: [...locales],
-		languageTags: {
+		pathToLocaleMapping: {
 			en: "en-US",
 			nl: "nl-NL",
 			de: "de-DE",
 		},
-		localizedPaths: {},
+		nextIntlMiddlewareOptions: {
+			localePrefix: "always",
+			localeDetection: false,
+		},
 	});
 
-	const customMiddleware = createNextIntlCustomPathMiddleware({
-		localeManager: manager,
-		useLocaleForRoot: true,
-	});
-
-	return customMiddleware(request);
+	return intlMiddleware(request);
 };
 
 export const config = {
@@ -32,7 +56,7 @@ export const config = {
 
 		// Set a cookie to remember the previous locale for
 		// all requests that have a locale prefix
-		"/(de|en)/:path*",
+		"/(de|en|nl)/:path*",
 
 		// Enable redirects that add missing locales
 		// (e.g. `/pathnames` -> `/en/pathnames`)
