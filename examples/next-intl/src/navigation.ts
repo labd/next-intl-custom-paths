@@ -12,14 +12,14 @@ export const {
 	usePathname: useTestPathname,
 	Link,
 	redirect,
-	useRouter,
+	useRouter: useTestRouter,
 } = createLocalizedPathnamesNavigation({
 	locales,
 	pathnames,
 	localePrefix,
 });
 
-export const { usePathname } = createLocalizedNavigation(
+export const { usePathname, useRouter } = createLocalizedNavigation(
 	locales,
 	defaultLocale,
 	localePrefix,
