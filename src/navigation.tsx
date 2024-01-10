@@ -5,8 +5,6 @@ import {
 	createLocalizedPathnamesNavigation,
 } from "next-intl/navigation";
 
-type Locale = AllLocales[number];
-
 /**
  * Create customized navigation helpers
  */
@@ -30,7 +28,9 @@ export function createLocalizedNavigation<
 	const Link = ({
 		locale,
 		...props
-	}: Parameters<typeof NextIntlLink>[0] & { locale?: Locale | undefined }) => {
+	}: Parameters<typeof NextIntlLink>[0] & {
+		locale?: Locales[number] | undefined;
+	}) => {
 		const currentLocale = useLocale();
 		const bcp47Locale = locale ?? currentLocale;
 		return (
