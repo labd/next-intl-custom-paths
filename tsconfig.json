@@ -4,11 +4,10 @@
 		"allowJs": true,
 		"composite": false,
 		"esModuleInterop": true,
-		"experimentalDecorators": true,
-		"baseUrl": "./src/",
+		"baseUrl": "./src",
 		"isolatedModules": true,
 		"module": "ES2022",
-		"moduleResolution": "bundler",
+		"moduleResolution": "Node10",
 		"noEmit": true,
 		"outDir": "dist",
 		"preserveWatchOutput": true,
@@ -20,5 +19,6 @@
 		"target": "ES2022",
 		"jsx": "react-jsx"
 	},
+	"include": ["src", "vitest.config.ts"],
 	"exclude": ["node_modules/*", "**/node_modules/*", "dist/*"]
 }
