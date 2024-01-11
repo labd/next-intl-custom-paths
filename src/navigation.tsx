@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { AllLocales, NextIntlMiddlewareOptions, localeToPath } from "new";
 import { useLocale } from "next-intl";
 import {
@@ -25,28 +26,23 @@ export function createLocalizedNavigation<
 	// Hacky way to add both versions of locales to the pathnames object
 	// Next-intl needs both the full locale and the language code in other parts of it's logic
 	// so replicating both here
-	const normalizedPathnames: PathnamesConfig = Object.keys(pathnames).reduce(
-		(acc, key) => {
-			const value = pathnames[key];
-			// @ts-ignore
-			if (typeof value === "string") {
-				// @ts-ignore
-				acc[key] = value;
-			} else if (typeof value === "object") {
-				// @ts-ignore
-				acc[key] = {};
-				for (const [locale, pathValue] of Object.entries(value)) {
-					// @ts-ignore
-					acc[key][locale.split("-")[0]] = pathValue;
-					// @ts-ignore
-					acc[key][locale] = pathValue;
-				}
-			}
-
-			return acc;
-		},
-		{} as PathnamesConfig
-	);
+	const compatiblePathnames = Object.fromEntries(
+		Object.entries(pathnames).map(([pathname, value]) => [
+			pathname,
+			typeof value === "string"
+				? // Handle usecase where no locale is set for a path (and only a string)
+				  value
+				: // Handle usecase where a locale is set for a path (and an object)
+				  Object.fromEntries(
+						Object.entries<string>(value).flatMap(
+							([locale, translatedPath]) => [
+								[locale, translatedPath],
+								[locale.split("-")[0], translatedPath],
+							]
+						)
+				  ),
+		])
+	) as PathnamesConfig;
 
 	const {
 		usePathname: useNextIntlPathname,
@@ -55,7 +51,7 @@ export function createLocalizedNavigation<
 	} = createLocalizedPathnamesNavigation({
 		locales,
 		localePrefix,
-		pathnames: normalizedPathnames,
+		pathnames: compatiblePathnames,
 	});
 
 	const mapToPathLocale = <T extends { locale?: AllLocales[number] }>(
@@ -69,12 +65,12 @@ export function createLocalizedNavigation<
 		};
 	};
 
-	const Link = ({
+	function Link({
 		locale,
 		...props
 	}: Parameters<typeof NextIntlLink>[0] & {
-		locale?: Locales[number] | undefined;
-	}) => {
+		locale?: AllLocales[number] | undefined;
+	}) {
 		const currentLocale = useLocale();
 		const bcp47Locale = locale ?? currentLocale;
 		return (
@@ -87,9 +83,9 @@ export function createLocalizedNavigation<
 				}
 			/>
 		);
-	};
+	}
 
-	// Not much needed right now it seems
+	// Adds compatibility for path locale
 	const usePathname: () => keyof PathnamesConfig = () => {
 		const pathname = String(useNextIntlPathname());
 		const pathLocale = Object.keys(pathToLocaleMapping).find((locale) =>
@@ -112,22 +108,7 @@ export function createLocalizedNavigation<
 				options: Parameters<typeof router.replace>[1] & {
 					locale?: AllLocales[number];
 				}
-			) => {
-				console.log(
-					"Replacing",
-					href,
-					options,
-					mapToPathLocale(currentLocale, options ?? {})
-				);
-				return router.replace(
-					href,
-					mapToPathLocale(
-						currentLocale,
-						// TODO: Use correct mapping
-						options ?? {}
-					)
-				);
-			},
+			) => router.replace(href, mapToPathLocale(currentLocale, options ?? {})),
 			push: (
 				href: Parameters<typeof router.push>[0],
 				options:
@@ -135,10 +116,7 @@ export function createLocalizedNavigation<
 							locale?: AllLocales[number];
 					  })
 					| undefined
-			) => {
-				console.log("Pushing", href, options);
-				return router.push(href, mapToPathLocale(currentLocale, options ?? {}));
-			},
+			) => router.push(href, mapToPathLocale(currentLocale, options ?? {})),
 		};
 	};
 
