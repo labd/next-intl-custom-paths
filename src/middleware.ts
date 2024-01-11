@@ -1,102 +1,108 @@
-import { LocaleManager } from "manager";
+import { localeToPath, pathToLocale } from "helpers";
 import createNextIntlMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { AllLocales, NextIntlMiddlewareOptions } from "types";
 
-// Helper type to get the arguments for a function
-export type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
-
-type NextIntlMiddlewareOptions = Partial<
-	ArgsType<typeof createNextIntlMiddleware>[0]
->;
-
-type Options = {
-	localeManager: LocaleManager;
-	useLocaleForRoot: boolean;
-	// Allow updating the middlewareOptions
-	nextIntlMiddlewareOptions?: NextIntlMiddlewareOptions;
+type MiddlewareOptions<Locales extends AllLocales> = {
+	locales: Locales;
+	defaultLocale: Locales[number];
+	pathToLocaleMapping: Record<string, Locales[number]>;
+	nextIntlMiddlewareOptions: NextIntlMiddlewareOptions;
 };
 
-export const createNextIntlCustomPathMiddleware = (options: Options) => {
-	const m = options.localeManager;
-	if (!m) {
-		throw new Error("LocaleManager is required");
-	}
+export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
+	locales,
+	defaultLocale,
+	pathToLocaleMapping,
+	nextIntlMiddlewareOptions,
+}: MiddlewareOptions<Locales>) {
+	return (request: NextRequest) => {
+		if (
+			new Set(Object.values(pathToLocaleMapping)).size !==
+			Object.values(pathToLocaleMapping).length
+		) {
+			// Having a path map to multiple locales would lead to weird issues, block it here
+			throw new Error("Duplicate locale path mapping");
+		}
 
-	const localePrefix: NextIntlMiddlewareOptions["localePrefix"] =
-		options.nextIntlMiddlewareOptions?.localePrefix ?? options.useLocaleForRoot
-			? "always"
-			: "as-needed";
+		const intlMiddleware = createNextIntlMiddleware({
+			locales,
+			defaultLocale,
+			...nextIntlMiddlewareOptions,
+		});
 
-	const intlMiddleware = createNextIntlMiddleware({
-		locales: m.locales(),
-		defaultLocale: m.defaultLocale(),
-		localeDetection: false,
-		alternateLinks: true,
-		localePrefix,
-		...options.nextIntlMiddlewareOptions,
-	});
+		// Redirect to the default locale path if the root is requested and the localePrefix is set to always
+		if (
+			request.nextUrl.pathname === "/" &&
+			nextIntlMiddlewareOptions.localePrefix === "always"
+		) {
+			const url = new URL(
+				`/${localeToPath(defaultLocale, pathToLocaleMapping)}`,
+				request.nextUrl.origin
+			);
+			return NextResponse.redirect(url, 308);
+		}
 
-	return (request: NextRequest): NextResponse<unknown> => {
-		const parsed = m.parseLocalizedPath(request.nextUrl.pathname);
-		console.log("Enabled locales", m.locales());
+		const intlRegex = new RegExp("/((?!.*\\..*).*)");
 
-		console.log(
-			"parsed",
-			parsed?.fullPath,
-			request.nextUrl.pathname,
-			"exact match?",
-			parsed?.exactMatch
+		return intlRegex.test(request.nextUrl.pathname)
+			? handlePathLocale(request, intlMiddleware, pathToLocaleMapping)
+			: NextResponse.next();
+	};
+}
+
+function handlePathLocale(
+	request: NextRequest,
+	intlMiddleware: (request: NextRequest) => NextResponse<unknown>,
+	pathToLocaleMapping: Record<string, AllLocales[number]>
+) {
+	const pathLocale = request.nextUrl.pathname.split("/")[1];
+	let finalRequest: NextRequest = request;
+
+	// Check whether the locale used in the path is the complete unmapped locale
+	// If so we should redirect to the path mapped to that locale as to not trigger duplicate content
+	if (localeToPath(pathLocale, pathToLocaleMapping)) {
+		const mappedURL = new URL(
+			request.nextUrl.pathname.replace(
+				new RegExp(`^/${pathLocale}`),
+				`/${localeToPath(pathLocale, pathToLocaleMapping)}`
+			),
+			request.nextUrl.origin
 		);
 
-		if (parsed?.fullPath && parsed?.exactMatch) {
-			const url = new URL(parsed.fullPath, request.nextUrl.origin);
-			const newRequest = new NextRequest(url, request as Request);
-			const middlewareResponse = intlMiddleware(newRequest);
-			return middlewareResponse;
-		}
+		return NextResponse.redirect(mappedURL, 308);
+	}
+	const locale = pathToLocale(pathLocale, pathToLocaleMapping);
 
-		if (request.nextUrl.pathname === "/" && localePrefix === "always") {
-			const url = new URL(`${parsed?.fullPath}`, request.nextUrl.origin);
+	if (pathLocale && locale) {
+		const mappedURL = new URL(
+			request.nextUrl.pathname.replace(
+				new RegExp(`^/${pathLocale}`),
+				`/${locale}`
+			),
+			request.nextUrl.origin
+		);
+		finalRequest = new NextRequest(mappedURL, request as Request);
+	}
 
-			return NextResponse.redirect(url, 308);
-		}
+	const response = intlMiddleware(finalRequest);
 
-		if (parsed?.exactMatch) {
-			const url = new URL(parsed.fullPath, request.nextUrl.origin);
-			console.log("exact match", parsed.fullPath);
-			const newRequest = new NextRequest(url, request as Request);
-			const middlewareResponse = intlMiddleware(newRequest);
+	// Replace full locales with path locales in `Link` header
+	const linkHeader = response.headers.get("link");
+	const localePattern = /\/([a-zA-Z-]+)(\/[^;]*)?(?=[>;])/g;
 
-			// TODO: Work on setting proper Link headers
+	function replaceLocales(match: string, locale: string, path: string) {
+		const mappedLocale =
+			Object.keys(pathToLocaleMapping).find(
+				(key) => pathToLocaleMapping[key] === locale
+			) || locale;
+		return `/${mappedLocale}${path || ""}`;
+	}
+	const modifiedUrlString = linkHeader?.replace(localePattern, replaceLocales);
 
-			// if (
-			// 	middlewareResponse.headers &&
-			// 	middlewareResponse.headers.has("Link")
-			// ) {
-			// 	// Rewrite link headers
-			// 	const linkHeaders = middlewareResponse.headers.get("Link")?.split(",");
-			// 	if (linkHeaders) {
-			// 		console.log("Found linkheaders", linkHeaders);
-			// 		linkHeaders?.map((link) => {
-			// 			console.log(link);
-			// 			return link.replaceAll("/nl-NL", "/nl");
-			// 		});
+	if (modifiedUrlString) {
+		response.headers.set("link", modifiedUrlString);
+	}
 
-			// 		middlewareResponse.headers.set("Link", linkHeaders?.join(","));
-			// 	}
-
-			// 	console.log("Link headers", middlewareResponse.headers.get("Link"));
-			// }
-			return middlewareResponse;
-		}
-
-		// If not an exact match, then we redirect
-		if (parsed && !parsed.exactMatch) {
-			const url = new URL(parsed.localized, request.nextUrl.origin);
-			return NextResponse.redirect(url, 308);
-		}
-
-		// No internal match? just use intlMiddleware
-		return intlMiddleware(request);
-	};
-};
+	return response;
+}

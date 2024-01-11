@@ -1,10 +1,11 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { AllLocales, NextIntlMiddlewareOptions, localeToPath } from "new";
+import { localeToPath } from "helpers";
 import { useLocale } from "next-intl";
 import {
 	Pathnames,
 	createLocalizedPathnamesNavigation,
 } from "next-intl/navigation";
+import { AllLocales, NextIntlMiddlewareOptions } from "types";
 
 export function createHelpers(mapping: Record<AllLocales[number], string>) {
 	return mapping;
@@ -48,6 +49,7 @@ export function createLocalizedNavigation<
 		usePathname: useNextIntlPathname,
 		Link: NextIntlLink,
 		useRouter: useNextIntlRouter,
+		redirect: nextIntlRedirect,
 	} = createLocalizedPathnamesNavigation({
 		locales,
 		localePrefix,
@@ -117,12 +119,47 @@ export function createLocalizedNavigation<
 					  })
 					| undefined
 			) => router.push(href, mapToPathLocale(currentLocale, options ?? {})),
+			prefetch: (
+				href: Parameters<typeof router.prefetch>[0],
+				options: Parameters<typeof router.prefetch>[1] & {
+					locale?: AllLocales[number];
+				}
+			) => {
+				router.prefetch(href, mapToPathLocale(currentLocale, options));
+			},
 		};
+	};
+
+	type RedirectHref = Parameters<typeof nextIntlRedirect>[0];
+
+	const redirect = (href: RedirectHref) => {
+		const currentLocale = useLocale();
+		const parsedHref =
+			typeof href === "object" && href.pathname
+				? { ...href, pathname: String(href.pathname) }
+				: { pathname: href as string };
+
+		const pathLocale = Object.keys(pathToLocaleMapping).find((locale) =>
+			parsedHref.pathname.startsWith(`/${locale}`)
+		);
+
+		console.log(pathLocale);
+
+		if (!pathLocale) {
+			parsedHref.pathname = `/${localeToPath(
+				currentLocale,
+				pathToLocaleMapping
+			)}${parsedHref.pathname}`;
+			console.log("!!!!!!!!!!!!", parsedHref.pathname);
+		}
+
+		return nextIntlRedirect(parsedHref as RedirectHref);
 	};
 
 	return {
 		usePathname,
 		useRouter,
 		Link,
+		redirect,
 	};
 }
