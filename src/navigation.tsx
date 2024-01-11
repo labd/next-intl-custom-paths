@@ -22,6 +22,32 @@ export function createLocalizedNavigation<
 	pathToLocaleMapping: Record<string, Locales[number]>,
 	pathnames: PathnamesConfig
 ) {
+	// Hacky way to add both versions of locales to the pathnames object
+	// Next-intl needs both the full locale and the language code in other parts of it's logic
+	// so replicating both here
+	const normalizedPathnames: PathnamesConfig = Object.keys(pathnames).reduce(
+		(acc, key) => {
+			const value = pathnames[key];
+			// @ts-ignore
+			if (typeof value === "string") {
+				// @ts-ignore
+				acc[key] = value;
+			} else if (typeof value === "object") {
+				// @ts-ignore
+				acc[key] = {};
+				for (const [locale, pathValue] of Object.entries(value)) {
+					// @ts-ignore
+					acc[key][locale.split("-")[0]] = pathValue;
+					// @ts-ignore
+					acc[key][locale] = pathValue;
+				}
+			}
+
+			return acc;
+		},
+		{} as PathnamesConfig
+	);
+
 	const {
 		usePathname: useNextIntlPathname,
 		Link: NextIntlLink,
@@ -29,7 +55,7 @@ export function createLocalizedNavigation<
 	} = createLocalizedPathnamesNavigation({
 		locales,
 		localePrefix,
-		pathnames,
+		pathnames: normalizedPathnames,
 	});
 
 	const mapToPathLocale = <T extends { locale?: AllLocales[number] }>(
@@ -69,6 +95,7 @@ export function createLocalizedNavigation<
 		const pathLocale = Object.keys(pathToLocaleMapping).find((locale) =>
 			pathname.startsWith(`/${locale}`)
 		);
+
 		return pathLocale
 			? pathname.replace(new RegExp(`^/${pathLocale}/?`), "/")
 			: pathname;
