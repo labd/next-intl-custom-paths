@@ -10,7 +10,7 @@ import {
 
 export const {
 	usePathname: useTestPathname,
-	Link,
+	Link: NextIntlLink,
 	redirect,
 	useRouter: useTestRouter,
 } = createLocalizedPathnamesNavigation({
@@ -19,7 +19,7 @@ export const {
 	localePrefix,
 });
 
-export const { usePathname, useRouter } = createLocalizedNavigation(
+export const { usePathname, useRouter, Link } = createLocalizedNavigation(
 	locales,
 	defaultLocale,
 	localePrefix,

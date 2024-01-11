@@ -9,7 +9,7 @@ import { Link } from "../navigation";
 export default function NavigationLink<Pathname extends AppPathnames>({
 	href,
 	...rest
-}: ComponentProps<typeof Link<Pathname>>) {
+}: ComponentProps<typeof Link>) {
 	const selectedLayoutSegment = useSelectedLayoutSegment();
 	const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : "/";
 	const isActive = pathname === href;
