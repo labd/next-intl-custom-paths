@@ -1,4 +1,4 @@
-import { createNewIntlCustomPathMiddleware } from "@labdigital/next-intl-custom-paths";
+import { createNextIntlCustomPathMiddleware } from "@labdigital/next-intl-custom-paths";
 import { NextRequest } from "next/server";
 import {
 	localePrefix,
@@ -7,43 +7,14 @@ import {
 	pathnames,
 } from "./config";
 
-// export const middleware = (request: NextRequest) => {
-// 	const manager = new LocaleManager({
-// 		defaultLocale: "en-US",
-// 		locales: [...locales],
-// 		languageTags: {
-// 			en: "en-US",
-// 			nl: "nl-NL",
-// 			de: "de-DE",
-// 		},
-// 		localizedPaths: {
-// 			"/pathnames": {
-// 				"en-US": "/pathnames",
-// 				"nl-NL": "/padnamen",
-// 				"de-DE": "/pfadnamen",
-// 			},
-// 		},
-// 	});
-
-// 	const customMiddleware = createNextIntlCustomPathMiddleware({
-// 		localeManager: manager,
-// 		useLocaleForRoot: true,
-// 		nextIntlMiddlewareOptions: {
-// 			localePrefix: "always",
-// 		},
-// 	});
-
-// 	return customMiddleware(request);
-// };
-
 export const middleware = (request: NextRequest) => {
-	const intlMiddleware = createNewIntlCustomPathMiddleware({
+	const intlMiddleware = createNextIntlCustomPathMiddleware({
 		defaultLocale: "en-US",
 		locales: [...locales],
 		pathToLocaleMapping,
 		nextIntlMiddlewareOptions: {
 			localePrefix,
-			localeDetection: false,
+			// localeDetection: true,
 			pathnames,
 		},
 	});
