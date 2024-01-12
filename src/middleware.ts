@@ -36,11 +36,11 @@ export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
 			request.nextUrl.pathname === "/" &&
 			nextIntlMiddlewareOptions.localePrefix === "always"
 		) {
-			const url = new URL(
-				`/${localeToPath(defaultLocale, pathToLocaleMapping)}`,
-				request.nextUrl.origin
-			);
-			return NextResponse.redirect(url, 308);
+			request.nextUrl.pathname = `/${localeToPath(
+				defaultLocale,
+				pathToLocaleMapping
+			)}`;
+			return NextResponse.redirect(request.nextUrl, 308);
 		}
 
 		const intlRegex = new RegExp("/((?!.*\\..*).*)");
@@ -62,27 +62,21 @@ function handlePathLocale(
 	// Check whether the locale used in the path is the complete unmapped locale
 	// If so we should redirect to the path mapped to that locale as to not trigger duplicate content
 	if (localeToPath(pathLocale, pathToLocaleMapping)) {
-		const mappedURL = new URL(
-			request.nextUrl.pathname.replace(
-				new RegExp(`^/${pathLocale}`),
-				`/${localeToPath(pathLocale, pathToLocaleMapping)}`
-			),
-			request.nextUrl.origin
+		request.nextUrl.pathname.replace(
+			new RegExp(`^/${pathLocale}`),
+			`/${localeToPath(pathLocale, pathToLocaleMapping)}`
 		);
 
-		return NextResponse.redirect(mappedURL, 308);
+		return NextResponse.redirect(request.nextUrl, 308);
 	}
 	const locale = pathToLocale(pathLocale, pathToLocaleMapping);
 
 	if (pathLocale && locale) {
-		const mappedURL = new URL(
-			request.nextUrl.pathname.replace(
-				new RegExp(`^/${pathLocale}`),
-				`/${locale}`
-			),
-			request.nextUrl.origin
+		request.nextUrl.pathname.replace(
+			new RegExp(`^/${pathLocale}`),
+			`/${locale}`
 		);
-		finalRequest = new NextRequest(mappedURL, request as Request);
+		finalRequest = new NextRequest(request.nextUrl, request as Request);
 	}
 
 	const response = intlMiddleware(finalRequest);
