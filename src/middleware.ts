@@ -72,7 +72,7 @@ function handlePathLocale(
 	const locale = pathToLocale(pathLocale, pathToLocaleMapping);
 
 	if (pathLocale && locale) {
-		request.nextUrl.pathname.replace(
+		request.nextUrl.pathname = request.nextUrl.pathname.replace(
 			new RegExp(`^/${pathLocale}`),
 			`/${locale}`
 		);
