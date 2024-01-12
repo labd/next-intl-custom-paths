@@ -6,7 +6,6 @@ it("handles i18n routing", async ({ page }) => {
 
 	// A cookie remembers the last locale
 	const response = await page.goto("/de");
-	console.log(await response?.headerValue("set-cookie"));
 
 	await page.goto("/");
 	await expect(page).toHaveURL("/de");
