@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.2.1
+
+### Patch Changes
+
+- 0b3d1ca: Fix url rewriting when replacing path with locale
+
 ## 0.2.0
 
 ### Minor Changes
