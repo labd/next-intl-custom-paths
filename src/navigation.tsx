@@ -143,14 +143,11 @@ export function createLocalizedNavigation<
 			parsedHref.pathname.startsWith(`/${locale}`)
 		);
 
-		console.log(pathLocale);
-
 		if (!pathLocale) {
 			parsedHref.pathname = `/${localeToPath(
 				currentLocale,
 				pathToLocaleMapping
 			)}${parsedHref.pathname}`;
-			console.log("!!!!!!!!!!!!", parsedHref.pathname);
 		}
 
 		return nextIntlRedirect(parsedHref as RedirectHref);
