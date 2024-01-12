@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.2.0
+
+### Minor Changes
+
+- 819ddee: Rewrite without locale manager
+
 ## 0.1.0
 
 ### Minor Changes
