@@ -36,10 +36,8 @@ export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
 			request.nextUrl.pathname === "/" &&
 			nextIntlMiddlewareOptions.localePrefix === "always"
 		) {
-			request.nextUrl.pathname = `/${localeToPath(
-				defaultLocale,
-				pathToLocaleMapping
-			)}`;
+			const newPath = localeToPath(defaultLocale, pathToLocaleMapping);
+			request.nextUrl.pathname = `/${newPath}`;
 			return NextResponse.redirect(request.nextUrl, 308);
 		}
 
@@ -58,9 +56,10 @@ function handlePathLocale(
 	// Check whether the locale used in the path is the complete unmapped locale
 	// If so we should redirect to the path mapped to that locale as to not trigger duplicate content
 	if (localeToPath(pathLocale, pathToLocaleMapping)) {
-		request.nextUrl.pathname.replace(
+		const newPath = localeToPath(pathLocale, pathToLocaleMapping);
+		request.nextUrl.pathname = request.nextUrl.pathname.replace(
 			new RegExp(`^/${pathLocale}`),
-			`/${localeToPath(pathLocale, pathToLocaleMapping)}`
+			`/${newPath}`
 		);
 
 		return NextResponse.redirect(request.nextUrl, 308);
