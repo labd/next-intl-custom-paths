@@ -1,5 +1,12 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.3.0
+
+### Minor Changes
+
+- 779f2d9: Fix Link component to accept child nodes
+- 3925b00: Fix redirecting locale to mapped paths
+
 ## 0.2.1
 
 ### Patch Changes

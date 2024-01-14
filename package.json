@@ -1,6 +1,6 @@
 {
 	"name": "@labdigital/next-intl-custom-paths",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "Custom path support for next-intl",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
