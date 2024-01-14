@@ -69,6 +69,7 @@ export function createLocalizedNavigation<
 
 	function Link({
 		locale,
+		children,
 		...props
 	}: Parameters<typeof NextIntlLink>[0] & {
 		locale?: AllLocales[number] | undefined;
@@ -83,7 +84,9 @@ export function createLocalizedNavigation<
 						? undefined
 						: localeToPath(bcp47Locale, pathToLocaleMapping)
 				}
-			/>
+			>
+				{children}
+			</NextIntlLink>
 		);
 	}
 
