@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.4.0
+
+### Minor Changes
+
+- a53758c: Differentiate the localePrefix for the root page. This allows the root page to have no locale but sub path that do require them
+
 ## 0.3.0
 
 ### Minor Changes
