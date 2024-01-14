@@ -21,6 +21,7 @@ export function createLocalizedNavigation<
 	locales: Locales,
 	defaultLocale: Locales[number],
 	localePrefix: NextIntlMiddlewareOptions["localePrefix"],
+	localePrefixForRoot: "always" | "as-needed",
 	pathToLocaleMapping: Record<string, Locales[number]>,
 	pathnames: PathnamesConfig
 ) {
@@ -75,16 +76,23 @@ export function createLocalizedNavigation<
 		locale?: AllLocales[number] | undefined;
 	}) {
 		const currentLocale = useLocale();
-		const bcp47Locale = locale ?? currentLocale;
+		const wantLocale = locale ?? currentLocale;
+
+		let localePath = localeToPath(wantLocale, pathToLocaleMapping);
+		const { href } = props;
+
+		// If the `localePrefixForRoot` is set to "as-needed" then we don't want to
+		// include the locale path in the URL for the root page. So erase it
+		if (
+			localePrefixForRoot === "as-needed" &&
+			wantLocale === defaultLocale &&
+			href === "/"
+		) {
+			localePath = undefined;
+		}
+
 		return (
-			<NextIntlLink
-				{...props}
-				locale={
-					bcp47Locale === defaultLocale
-						? undefined
-						: localeToPath(bcp47Locale, pathToLocaleMapping)
-				}
-			>
+			<NextIntlLink {...props} locale={localePath}>
 				{children}
 			</NextIntlLink>
 		);

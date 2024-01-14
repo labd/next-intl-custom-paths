@@ -6,6 +6,7 @@ import { AllLocales, NextIntlMiddlewareOptions } from "types";
 type MiddlewareOptions<Locales extends AllLocales> = {
 	locales: Locales;
 	defaultLocale: Locales[number];
+	localePrefixForRoot?: "always" | "as-needed";
 	pathToLocaleMapping: Record<string, Locales[number]>;
 	nextIntlMiddlewareOptions: NextIntlMiddlewareOptions;
 };
@@ -13,6 +14,7 @@ type MiddlewareOptions<Locales extends AllLocales> = {
 export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
 	locales,
 	defaultLocale,
+	localePrefixForRoot,
 	pathToLocaleMapping,
 	nextIntlMiddlewareOptions,
 }: MiddlewareOptions<Locales>) {
@@ -31,14 +33,25 @@ export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
 			...nextIntlMiddlewareOptions,
 		});
 
-		// Redirect to the default locale path if the root is requested and the localePrefix is set to always
+		const defaultLocalePath = localeToPath(defaultLocale, pathToLocaleMapping);
+		console.log(localePrefixForRoot	)
+
+		// If the root is requested for the default locale path and the localePrefix
+		// is set to as-needed, redirect to / instead
 		if (
-			request.nextUrl.pathname === "/" &&
-			nextIntlMiddlewareOptions.localePrefix === "always"
+			request.nextUrl.pathname === `/${defaultLocalePath}` &&
+			localePrefixForRoot === "as-needed"
 		) {
-			const newPath = localeToPath(defaultLocale, pathToLocaleMapping);
-			request.nextUrl.pathname = `/${newPath}`;
+			request.nextUrl.pathname = "/";
 			return NextResponse.redirect(request.nextUrl, 308);
+		}
+
+		// Redirect to the default locale path if the root is requested and the localePrefix is set to always
+		if (request.nextUrl.pathname === "/") {
+			request.nextUrl.pathname = `/${defaultLocalePath}`;
+			if (localePrefixForRoot === "always") {
+				return NextResponse.redirect(request.nextUrl, 308);
+			}
 		}
 
 		return handlePathLocale(request, intlMiddleware, pathToLocaleMapping);
