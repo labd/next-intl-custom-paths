@@ -43,11 +43,7 @@ export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
 			return NextResponse.redirect(request.nextUrl, 308);
 		}
 
-		const intlRegex = new RegExp("/((?!.*\\..*).*)");
-
-		return intlRegex.test(request.nextUrl.pathname)
-			? handlePathLocale(request, intlMiddleware, pathToLocaleMapping)
-			: NextResponse.next();
+		return handlePathLocale(request, intlMiddleware, pathToLocaleMapping);
 	};
 }
 
