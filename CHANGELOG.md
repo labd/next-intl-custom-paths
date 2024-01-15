@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.5.0
+
+### Minor Changes
+
+- 9975697: Refactor codebase for testability
+
 ## 0.4.0
 
 ### Minor Changes
