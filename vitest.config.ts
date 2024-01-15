@@ -1,4 +1,3 @@
-import path from "path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -11,12 +10,6 @@ export default defineConfig({
 		},
 		passWithNoTests: true,
 		exclude: ["next-intl/"],
-		include: ["src/**/*.spec.ts"],
-	},
-
-	resolve: {
-		alias: {
-			"~src": path.join(__dirname, "src"),
-		},
+		include: ["src/**/*.test.ts"],
 	},
 });

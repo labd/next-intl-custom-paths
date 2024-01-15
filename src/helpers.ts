@@ -11,7 +11,7 @@ export function localeToPath(
 	locale: AllLocales[number],
 	mapping: Record<AllLocales[number], string>
 ): string | undefined {
-	const match = Object.entries(mapping).find((item) => item[1] === locale);
+	const match = Object.entries(mapping).find((item) => item[1].toLowerCase() === locale.toLowerCase());
 
 	if (match) {
 		return match[0];
