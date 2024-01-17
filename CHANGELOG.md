@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.5.1
+
+### Patch Changes
+
+- bc7cd06: Fix pathnames navigation bug
+
 ## 0.5.0
 
 ### Minor Changes
