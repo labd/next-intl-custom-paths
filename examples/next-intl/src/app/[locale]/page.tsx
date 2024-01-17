@@ -14,6 +14,7 @@ export default function IndexPage({ params: { locale } }: Props) {
 
 	return (
 		<PageLayout title={t("title")}>
+			<p>Hello!</p>
 			<p className="max-w-[590px]">
 				{t.rich("description", {
 					code: (chunks) => (

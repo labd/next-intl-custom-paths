@@ -39,7 +39,7 @@ export function createLocalizedNavigation<
 						Object.entries<string>(value).flatMap(
 							([locale, translatedPath]) => [
 								[locale, translatedPath],
-								[locale.split("-")[0], translatedPath],
+								[localeToPath(locale, pathToLocaleMapping), translatedPath],
 							]
 						)
 				  ),

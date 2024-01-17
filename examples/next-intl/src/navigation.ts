@@ -3,6 +3,7 @@ import { createLocalizedPathnamesNavigation } from "next-intl/navigation";
 import {
 	defaultLocale,
 	localePrefix,
+	localePrefixForRoot,
 	locales,
 	pathToLocaleMapping,
 	pathnames,
@@ -24,6 +25,7 @@ export const { usePathname, useRouter, Link, redirect } =
 		locales,
 		defaultLocale,
 		localePrefix,
+		localePrefixForRoot,
 		pathToLocaleMapping,
 		pathnames,
 	);
