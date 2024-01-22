@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.7.0
+
+### Minor Changes
+
+- 85a4f65: Fix Link component with as-needed localePrefix
+
 ## 0.6.0
 
 ### Minor Changes
