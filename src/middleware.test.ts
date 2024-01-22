@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
+import { describe, expect, it } from "vitest";
 import { processRequest } from "./middleware";
-import { describe, it, expect } from "vitest";
 
 describe("rewrite request for ", () => {
 	it.each([
@@ -20,9 +20,9 @@ describe("rewrite request for ", () => {
 				defaultLocale: "en-US",
 				localePrefixForRoot: "as-needed",
 				pathToLocaleMapping: {
-					"en": "en-US",
-					"nl": "nl-NL",
-					"fr": "fr-FR",
+					en: "en-US",
+					nl: "nl-NL",
+					fr: "fr-FR",
 				},
 			});
 
@@ -45,9 +45,9 @@ describe("rewrite request for ", () => {
 				defaultLocale: "en-US",
 				localePrefixForRoot: "always",
 				pathToLocaleMapping: {
-					"en": "en-US",
-					"nl": "nl-NL",
-					"fr": "fr-FR",
+					en: "en-US",
+					nl: "nl-NL",
+					fr: "fr-FR",
 				},
 			});
 
@@ -56,4 +56,18 @@ describe("rewrite request for ", () => {
 		}
 	);
 
+	it("should not redirect if no localePrefix is needed for the default locale", () => {
+		const request = new NextRequest("http://example.org/");
+
+		const result = processRequest(request, {
+			defaultLocale: "en-US",
+			localePrefixForRoot: "as-needed",
+			pathToLocaleMapping: {
+				en: "en-US",
+				nl: "nl-NL",
+				fr: "fr-FR",
+			},
+		});
+		expect(result.request?.url).toBe("http://example.org/");
+	});
 });

@@ -1,7 +1,7 @@
-import { localeToPath, pathToLocale } from "./helpers";
 import createNextIntlMiddleware from "next-intl/middleware";
 import { NextURL } from "next/dist/server/web/next-url";
 import { NextRequest, NextResponse } from "next/server";
+import { localeToPath, pathToLocale } from "./helpers";
 import { AllLocales, NextIntlMiddlewareOptions } from "./types";
 
 type MiddlewareOptions<Locales extends AllLocales> = {
@@ -91,21 +91,22 @@ export const processRequest = <Locales extends AllLocales>(
 
 	// Redirect to the default locale path if the root is requested and the
 	// localePrefix is set to always
-	if (request.nextUrl.pathname === "/") {
+	if (request.nextUrl.pathname === "/" && localePrefixForRoot === "always") {
 		request.nextUrl.pathname = `/${defaultLocalePath}`;
-		if (localePrefixForRoot === "always") {
-			return {
-				statusCode: 308,
-				targetURL: request.nextUrl,
-			};
-		}
+		return {
+			statusCode: 308,
+			targetURL: request.nextUrl,
+		};
 	}
 
 	const pathLocale = request.nextUrl.pathname.split("/")[1];
 
 	// Check whether the locale used in the path is the complete unmapped locale
 	// If so we should redirect to the path mapped to that locale as to not trigger duplicate content
-	if (localeToPath(pathLocale, pathToLocaleMapping)) {
+	if (
+		localeToPath(pathLocale, pathToLocaleMapping) &&
+		request.nextUrl.pathname !== "/"
+	) {
 		const newPathLocale = localeToPath(pathLocale, pathToLocaleMapping);
 
 		request.nextUrl.pathname = request.nextUrl.pathname.replace(
@@ -122,7 +123,7 @@ export const processRequest = <Locales extends AllLocales>(
 
 		// Remove trailing slash. NextJS will by default also remove it so better
 		// to redirect directly to the correct one
-		if(request.nextUrl.pathname.endsWith("/")) {
+		if (request.nextUrl.pathname.endsWith("/")) {
 			request.nextUrl.pathname = request.nextUrl.pathname.slice(0, -1);
 		}
 
@@ -133,7 +134,7 @@ export const processRequest = <Locales extends AllLocales>(
 	}
 	const locale = pathToLocale(pathLocale, pathToLocaleMapping);
 
-	if (pathLocale && locale) {
+	if (pathLocale && locale && request.nextUrl.pathname !== "/") {
 		request.nextUrl.pathname = request.nextUrl.pathname.replace(
 			new RegExp(`^/${pathLocale}`, "i"),
 			`/${locale}`
