@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.5.2
+
+### Patch Changes
+
+- 60f442c: Fix root path when locale prefix is not needed
+
 ## 0.5.1
 
 ### Patch Changes
