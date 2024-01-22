@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.6.0
+
+### Minor Changes
+
+- 667d8c4: Fix double redirect bug when path has no locale
+
 ## 0.5.2
 
 ### Patch Changes
