@@ -1,4 +1,5 @@
 import PageLayout from "components/PageLayout";
+import { Link } from "navigation";
 import { useTranslations } from "next-intl";
 import { unstable_setRequestLocale } from "next-intl/server";
 
@@ -15,6 +16,9 @@ export default function IndexPage({ params: { locale } }: Props) {
 	return (
 		<PageLayout title={t("title")}>
 			<p>Hello!</p>
+			<Link className="inline-block bg-white p-4 rounded-md" href="/pathnames">
+				Pathnames link
+			</Link>
 			<p className="max-w-[590px]">
 				{t.rich("description", {
 					code: (chunks) => (
