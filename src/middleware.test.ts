@@ -18,6 +18,7 @@ describe("rewrite request for ", () => {
 
 			const result = processRequest(request, {
 				defaultLocale: "en-US",
+				localePrefix: "as-needed",
 				localePrefixForRoot: "as-needed",
 				pathToLocaleMapping: {
 					en: "en-US",
@@ -33,6 +34,7 @@ describe("rewrite request for ", () => {
 
 	it.each([
 		["http://example.org/", "/en"],
+		["http://example.org/foobar", "/en/foobar"],
 		["http://example.org/en-US", "/en"],
 		["http://example.org/en-US/", "/en"],
 		["http://example.org/en-US/foobar", "/en/foobar"],
@@ -43,6 +45,7 @@ describe("rewrite request for ", () => {
 
 			const result = processRequest(request, {
 				defaultLocale: "en-US",
+				localePrefix: "always",
 				localePrefixForRoot: "always",
 				pathToLocaleMapping: {
 					en: "en-US",

@@ -36,6 +36,7 @@ export function createNextIntlCustomPathMiddleware<Locales extends AllLocales>({
 
 		const info = processRequest(request, {
 			defaultLocale,
+			localePrefix: nextIntlMiddlewareOptions.localePrefix,
 			localePrefixForRoot,
 			pathToLocaleMapping,
 		});
@@ -61,6 +62,7 @@ type processRequestResult = {
 
 type processRequestArgs<Locales extends AllLocales> = {
 	defaultLocale: Locales[number];
+	localePrefix?: "always" | "as-needed" | "never";
 	localePrefixForRoot?: "always" | "as-needed";
 	pathToLocaleMapping: Record<string, Locales[number]>;
 };
@@ -69,6 +71,7 @@ export const processRequest = <Locales extends AllLocales>(
 	request: NextRequest,
 	{
 		defaultLocale,
+		localePrefix,
 		localePrefixForRoot,
 		pathToLocaleMapping,
 	}: processRequestArgs<Locales>
@@ -132,8 +135,22 @@ export const processRequest = <Locales extends AllLocales>(
 			targetURL: request.nextUrl,
 		};
 	}
-	const locale = pathToLocale(pathLocale, pathToLocaleMapping);
 
+	// if pathLocale is not a path locale or locale (e.g. /foo) then the
+	// next-intl will redirect to the default locale (/nl-NL). However we want
+	// to intercept that and redirect to the localePath (/nl) instead. OTherwise
+	// we get a double redirect (e.g. /foo -> /nl-NL/foo -> /nl/foo)
+	const locale = pathToLocale(pathLocale, pathToLocaleMapping);
+	if (pathLocale && locale === undefined && localePrefix === "always") {
+		request.nextUrl.pathname = `/${defaultLocalePath}` + request.nextUrl.pathname;
+		return {
+			statusCode: 308,
+			targetURL: request.nextUrl,
+		};
+	}
+
+	// If there is a locale in the path and we have mapped that to a locale path
+	// then just update the url to the locale path
 	if (pathLocale && locale && request.nextUrl.pathname !== "/") {
 		request.nextUrl.pathname = request.nextUrl.pathname.replace(
 			new RegExp(`^/${pathLocale}`, "i"),
