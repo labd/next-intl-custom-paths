@@ -83,12 +83,9 @@ export function createLocalizedNavigation<
 
 		// If the `localePrefixForRoot` is set to "as-needed" then we don't want to
 		// include the locale path in the URL for the root page. So erase it
-		if (
-			localePrefixForRoot === "as-needed" &&
-			wantLocale === defaultLocale &&
-			href === "/"
-		) {
-			localePath = undefined;
+		// Also has the side usecase of not having the localePrefix on "always".
+		if (localePrefixForRoot === "as-needed" && wantLocale === defaultLocale) {
+			if (href === "/" || localePrefix !== "always") localePath = undefined;
 		}
 
 		return (
