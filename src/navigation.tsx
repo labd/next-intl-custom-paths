@@ -51,6 +51,7 @@ export function createLocalizedNavigation<
 		Link: NextIntlLink,
 		useRouter: useNextIntlRouter,
 		redirect: nextIntlRedirect,
+		getPathname: nextIntlGetPathname,
 	} = createLocalizedPathnamesNavigation({
 		locales,
 		localePrefix,
@@ -161,10 +162,28 @@ export function createLocalizedNavigation<
 		return nextIntlRedirect(parsedHref as RedirectHref);
 	};
 
+	type GetPathnameParameters = Omit<
+		Parameters<typeof nextIntlGetPathname>[0],
+		"locale"
+	> &
+		Pick<Partial<Parameters<typeof nextIntlGetPathname>[0]>, "locale">;
+
+	const getPathname = ({ href, locale }: GetPathnameParameters) => {
+		const currentLocale = useLocale();
+		const localePath = locale
+			? localeToPath(locale, pathToLocaleMapping)
+			: localeToPath(currentLocale, pathToLocaleMapping);
+		return nextIntlGetPathname({
+			href,
+			locale: localePath as Locales[number],
+		});
+	};
+
 	return {
 		usePathname,
 		useRouter,
 		Link,
 		redirect,
+		getPathname,
 	};
 }
