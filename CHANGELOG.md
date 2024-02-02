@@ -1,5 +1,11 @@
 # @labdigital/next-intl-custom-paths
 
+## 0.8.0
+
+### Minor Changes
+
+- b6aaa46: Add getPathname functionality from next-intl
+
 ## 0.7.0
 
 ### Minor Changes
