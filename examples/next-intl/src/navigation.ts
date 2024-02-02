@@ -20,7 +20,7 @@ export const {
 	localePrefix,
 });
 
-export const { usePathname, useRouter, Link, redirect } =
+export const { usePathname, useRouter, Link, redirect, getPathname } =
 	createLocalizedNavigation(
 		locales,
 		defaultLocale,
